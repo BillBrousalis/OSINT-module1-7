@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sara Reeves | LinkedOut</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #f3f2ef; color: rgba(0,0,0,0.9); font-size: 14px; }
+        a { color: #0a66c2; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .navbar { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; padding: 0 24px; display: flex; align-items: center; gap: 8px; height: 52px; }
+        .navbar-logo { font-size: 1rem; color: #0a66c2; font-weight: 900; letter-spacing: -0.5px; margin-right: 8px; }
+        .navbar-search { background: #eef3f8; border: none; border-radius: 4px; padding: 8px 12px; font-size: 0.85rem; width: 220px; color: #333; }
+        .navbar-links { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+        .navbar-link { display: flex; flex-direction: column; align-items: center; padding: 0 12px; color: rgba(0,0,0,0.6); font-size: 0.7rem; cursor: pointer; border-bottom: 2px solid transparent; height: 52px; justify-content: center; gap: 2px; }
+        .navbar-link.active { color: rgba(0,0,0,0.9); border-bottom-color: rgba(0,0,0,0.9); }
+        .navbar-link span:first-child { font-size: 1.1rem; }
+        .page { max-width: 1128px; margin: 0 auto; padding: 24px 0; display: flex; gap: 16px; }
+        .main { flex: 1; min-width: 0; }
+        .sidebar { width: 300px; flex-shrink: 0; }
+        .card { background: #fff; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08); margin-bottom: 8px; overflow: hidden; }
+        .card-body { padding: 16px; }
+        .profile-banner { height: 120px; background: linear-gradient(135deg, #0a66c2 0%, #004182 100%); }
+        .profile-info { padding: 8px 16px 16px; }
+        .profile-name { font-size: 1.3rem; font-weight: 600; margin-bottom: 2px; }
+        .profile-headline { color: rgba(0,0,0,0.7); margin-bottom: 4px; font-size: 0.9rem; }
+        .profile-meta { color: rgba(0,0,0,0.6); font-size: 0.8rem; margin-bottom: 8px; }
+        .profile-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .btn-primary { padding: 6px 16px; border-radius: 16px; font-size: 0.85rem; font-weight: 600; background: #0a66c2; color: #fff; border: none; cursor: pointer; }
+        .btn-secondary { padding: 6px 16px; border-radius: 16px; font-size: 0.85rem; font-weight: 600; background: #fff; color: #0a66c2; border: 1px solid #0a66c2; cursor: pointer; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .post-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .post-actions { display: flex; gap: 0; border-top: 1px solid rgba(0,0,0,0.08); margin-top: 12px; }
+        .post-action { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; color: rgba(0,0,0,0.6); font-size: 0.82rem; font-weight: 600; cursor: pointer; border-radius: 4px; }
+        .post-action:hover { background: rgba(0,0,0,0.04); }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-logo">LinkedOut</div>
+    <input class="navbar-search" type="text" placeholder="Search"/>
+    <div class="navbar-links">
+        <div class="navbar-link active"><span>🏠</span><span>Home</span></div>
+        <div class="navbar-link"><span>👥</span><span>My Network</span></div>
+        <div class="navbar-link"><span>💼</span><span>Jobs</span></div>
+        <div class="navbar-link"><span>💬</span><span>Messaging</span></div>
+        <div class="navbar-link"><span>🔔</span><span>Notifications</span></div>
+        <div class="navbar-link"><span>👤</span><span>Me</span></div>
+    </div>
+</nav>
+
+<div class="page">
+<div class="main">
+
+    <!-- Profile card -->
+    <div class="card">
+        <div class="profile-banner"></div>
+        <div style="margin-top:-48px; margin-left:16px; margin-bottom:0;">
+            <img src="/static/img/sara.jpg" style="width:96px; height:96px; border-radius:50%; object-fit:cover; border:3px solid #fff; display:block;"/>
+        </div>
+        <div class="profile-info">
+            <div class="profile-name">Sara Reeves</div>
+            <div class="profile-headline">Malware Analyst at CipherWatch Security</div>
+            <div class="profile-meta">London, England, United Kingdom &nbsp;·&nbsp; <a href="#">312 connections</a></div>
+            <div class="profile-meta"><span style="font-weight:600;">CipherWatch Security</span> &nbsp;·&nbsp; University of Edinburgh &nbsp;·&nbsp; <a href="/sara-reeves.io">sara-reeves.io</a></div>
+            <div class="profile-actions">
+                <button class="btn-primary">Open to</button>
+                <button class="btn-secondary">Add profile section</button>
+                <button class="btn-secondary">More</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post 0 — GitHub mention -->
+    <div class="card">
+        <div class="card-body">
+            <div class="post-header">
+                <img src="/static/img/sara.jpg" class="post-avatar"/>
+                <div>
+                    <div style="font-weight:600; font-size:0.9rem;">Sara Reeves</div>
+                    <div style="font-size:0.78rem; color:rgba(0,0,0,0.5);">Malware Analyst at CipherWatch Security · 1d</div>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; line-height:1.6; color:rgba(0,0,0,0.85);">
+                Pushed my analysis files for the PulseLoader sample to GitHub — YARA rule,
+                network IOCs, and a beacon decoder. The C2 infrastructure is now burned and
+                on blocklists but the tooling might be useful if you're hunting similar loaders.
+                <br/><br/>
+                Public if anyone wants to build on it:
+                <a href="/github/sara-reeves/pulseloader-analysis" style="color:#0a66c2;">github.com/sara-reeves/pulseloader-analysis</a> 🔧
+            </p>
+            <div style="margin-top:10px; font-size:0.78rem; color:rgba(0,0,0,0.4);">
+                👍 83 reactions &nbsp;·&nbsp; 19 comments
+            </div>
+        </div>
+        <div class="post-actions">
+            <div class="post-action">👍 Like</div>
+            <div class="post-action">💬 Comment</div>
+            <div class="post-action">🔁 Repost</div>
+            <div class="post-action">📤 Send</div>
+        </div>
+    </div>
+
+    <!-- Post 1 -->
+    <div class="card">
+        <div class="card-body">
+            <div class="post-header">
+                <img src="/static/img/sara.jpg" class="post-avatar"/>
+                <div>
+                    <div style="font-weight:600; font-size:0.9rem;">Sara Reeves</div>
+                    <div style="font-size:0.78rem; color:rgba(0,0,0,0.5);">Malware Analyst at CipherWatch Security · 3d</div>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; line-height:1.6; color:rgba(0,0,0,0.85);">
+                Spent the morning reverse engineering a loader that was hiding its C2 config
+                inside a JPEG's EXIF metadata. Creative, I'll give them that. The obfuscation
+                layer was easy to strip once you know what to look for — but I can imagine
+                this slipping past a lot of automated scanners.
+                <br/><br/>
+                If you're doing static analysis and ignoring image metadata, you might want
+                to reconsider. 🧵
+            </p>
+            <div style="margin-top:10px; font-size:0.78rem; color:rgba(0,0,0,0.4);">
+                👍 47 reactions &nbsp;·&nbsp; 12 comments
+            </div>
+        </div>
+        <div class="post-actions">
+            <div class="post-action">👍 Like</div>
+            <div class="post-action">💬 Comment</div>
+            <div class="post-action">🔁 Repost</div>
+            <div class="post-action">📤 Send</div>
+        </div>
+    </div>
+
+    <!-- Post 2 -->
+    <div class="card">
+        <div class="card-body">
+            <div class="post-header">
+                <img src="/static/img/sara.jpg" class="post-avatar"/>
+                <div>
+                    <div style="font-weight:600; font-size:0.9rem;">Sara Reeves</div>
+                    <div style="font-size:0.78rem; color:rgba(0,0,0,0.5);">Malware Analyst at CipherWatch Security · 1w</div>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; line-height:1.6; color:rgba(0,0,0,0.85);">
+                Three years ago I almost missed a ransomware dropper because it was disguised
+                as a Windows update stub. Caught it only because the timestamp was off by
+                a few milliseconds — something no legitimate installer does.
+                <br/><br/>
+                The small things are almost always the tell. Malware authors spend enormous
+                effort on the payload and almost none on the wrapper. That's where you find them.
+            </p>
+            <div style="margin-top:10px; font-size:0.78rem; color:rgba(0,0,0,0.4);">
+                👍 121 reactions &nbsp;·&nbsp; 34 comments
+            </div>
+        </div>
+        <div class="post-actions">
+            <div class="post-action">👍 Like</div>
+            <div class="post-action">💬 Comment</div>
+            <div class="post-action">🔁 Repost</div>
+            <div class="post-action">📤 Send</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="card">
+        <div class="card-body">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <p style="font-size:0.85rem; font-weight:600;">Who viewed your profile</p>
+                <a href="/linkedout/sara-reeves/views" style="font-size:0.8rem;">See all</a>
+            </div>
+            <p style="font-size:1.8rem; color:rgba(0,0,0,0.9); font-weight:600; margin-bottom:2px;">5</p>
+            <p style="color:rgba(0,0,0,0.5); font-size:0.75rem; margin-bottom:14px;">views in the last 7 days</p>
+            <a href="/linkedout/sara-reeves/views" style="display:block; font-size:0.8rem; color:#0a66c2;">View all →</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <p style="font-size:0.85rem; font-weight:600; margin-bottom:8px;">Post impressions</p>
+            <p style="font-size:1.8rem; color:rgba(0,0,0,0.9); font-weight:600;">168</p>
+            <p style="color:rgba(0,0,0,0.5); font-size:0.75rem;">Past 7 days</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

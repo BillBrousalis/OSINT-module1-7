@@ -1,0 +1,18 @@
+# Basic identity
+myhostname = mail.arcturus-news.com
+mydomain = arcturus-news.com
+myorigin = $mydomain
+
+# Only accept local delivery — this is a lab, not a real mail server
+inet_interfaces = loopback-only
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+
+# Maildir delivery via Dovecot LDA
+home_mailbox = Maildir/
+mailbox_command = /usr/lib/dovecot/deliver
+
+# Disable unnecessary features
+smtpd_banner = $myhostname ESMTP
+biff = no
+append_dot_mydomain = no
+readme_directory = no

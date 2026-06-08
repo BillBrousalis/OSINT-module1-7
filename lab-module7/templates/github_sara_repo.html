@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>sara-reeves/pulseloader-analysis — GitHub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #0d1117; color: #e6edf3; font-size: 14px; }
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .navbar { background: #161b22; border-bottom: 1px solid #30363d; height: 62px; display: flex; align-items: center; padding: 0 32px; gap: 16px; position: sticky; top: 0; z-index: 100; }
+        .nav-logo { font-size: 1.6rem; color: #f0f6fc; margin-right: 8px; }
+        .nav-search { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; color: #8b949e; width: 240px; }
+        .nav-links { display: flex; gap: 16px; font-size: 0.85rem; }
+        .nav-links a { color: #e6edf3; font-weight: 500; }
+        .nav-links a:hover { color: #f0f6fc; text-decoration: none; }
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+        .nav-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #30363d; }
+        .repo-header { background: #161b22; border-bottom: 1px solid #30363d; padding: 16px 32px; }
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 1.1rem; margin-bottom: 8px; }
+        .breadcrumb span { color: #8b949e; }
+        .label { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 500; background: #161b22; color: #8b949e; border: 1px solid #30363d; }
+        .tabs { display: flex; border-bottom: 1px solid #30363d; padding: 0 32px; gap: 0; background: #161b22; }
+        .tab { padding: 12px 16px; font-size: 0.85rem; color: #8b949e; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; }
+        .tab.active { color: #f0f6fc; border-bottom-color: #f78166; font-weight: 600; }
+        .tab-count { background: #30363d; border-radius: 12px; padding: 1px 7px; font-size: 0.75rem; color: #8b949e; }
+        .page { max-width: 1280px; margin: 0 auto; padding: 24px 32px; display: flex; gap: 24px; }
+        .main { flex: 1; min-width: 0; }
+        .sidebar { width: 280px; flex-shrink: 0; }
+        .file-header { background: #161b22; border: 1px solid #30363d; border-radius: 6px 6px 0 0; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+        .commit-avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+        .file-table { border: 1px solid #30363d; border-top: none; border-radius: 0 0 6px 6px; overflow: hidden; }
+        .file-row { display: flex; align-items: center; padding: 7px 16px; border-bottom: 1px solid #21262d; font-size: 0.85rem; gap: 8px; }
+        .file-row:last-child { border-bottom: none; }
+        .file-row:hover { background: #161b22; }
+        .file-icon { font-size: 0.9rem; color: #8b949e; width: 16px; }
+        .file-name { flex: 1; }
+        .file-name a { color: #c9d1d9; }
+        .file-name a:hover { color: #58a6ff; }
+        .file-commit { flex: 2; color: #8b949e; font-size: 0.8rem; }
+        .file-time { color: #8b949e; font-size: 0.8rem; white-space: nowrap; }
+        .readme { border: 1px solid #30363d; border-radius: 6px; overflow: hidden; margin-top: 16px; }
+        .readme-header { background: #161b22; border-bottom: 1px solid #30363d; padding: 10px 16px; font-size: 0.85rem; color: #8b949e; }
+        .readme-body { padding: 32px; background: #0d1117; line-height: 1.8; }
+        .readme-body h2 { font-size: 1.2rem; color: #f0f6fc; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #21262d; }
+        .readme-body h3 { font-size: 1rem; color: #e6edf3; margin: 16px 0 8px; }
+        .readme-body p { color: #c9d1d9; margin-bottom: 12px; font-size: 0.9rem; }
+        .readme-body ul { color: #c9d1d9; font-size: 0.9rem; padding-left: 20px; margin-bottom: 12px; }
+        .readme-body li { margin-bottom: 4px; }
+        .readme-body code { font-family: monospace; background: #161b22; border: 1px solid #30363d; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; color: #e6edf3; }
+        .readme-body pre { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; font-family: monospace; font-size: 0.82rem; color: #e6edf3; overflow-x: auto; margin-bottom: 12px; line-height: 1.6; }
+        .about-card { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+        .about-title { font-size: 0.85rem; font-weight: 600; color: #f0f6fc; margin-bottom: 8px; }
+        .about-desc { font-size: 0.82rem; color: #8b949e; line-height: 1.5; margin-bottom: 12px; }
+        .stat-row { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #8b949e; margin-bottom: 6px; }
+        .lang-dot-py { width: 10px; height: 10px; border-radius: 50%; background: #3572A5; flex-shrink: 0; }
+        .lang-dot-txt { width: 10px; height: 10px; border-radius: 50%; background: #6e7681; flex-shrink: 0; }
+        .btn-sm { padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="nav-logo">⬡</span>
+    <input class="nav-search" type="text" placeholder="Search or jump to..."/>
+    <div class="nav-links">
+        <a href="#">Pull requests</a>
+        <a href="#">Issues</a>
+        <a href="#">Marketplace</a>
+        <a href="#">Explore</a>
+    </div>
+    <div class="nav-right">
+        <span style="color:#8b949e;">🔔</span>
+        <img src="/static/img/sara.jpg" class="nav-avatar"/>
+    </div>
+</nav>
+
+<div class="repo-header">
+    <div class="breadcrumb">
+        <span style="font-size:0.9rem;">⬡</span>
+        <a href="#" style="font-weight:600; color:#58a6ff;">sara-reeves</a>
+        <span>/</span>
+        <strong style="color:#f0f6fc;">pulseloader-analysis</strong>
+        <span class="label">Public</span>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tab active">⬡ Code</div>
+    <div class="tab">⚠ Issues <span class="tab-count">0</span></div>
+    <div class="tab">⇄ Pull requests <span class="tab-count">0</span></div>
+    <div class="tab">▶ Actions</div>
+    <div class="tab">⚙ Settings</div>
+</div>
+
+<div class="page">
+<div class="main">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <button class="btn-sm">⎇ main ▾</button>
+        <div style="display:flex; gap:8px;">
+            <button class="btn-sm">Go to file</button>
+            <button class="btn-sm" style="background:#238636; border-color:#2ea043; color:#fff;">Code ▾</button>
+        </div>
+    </div>
+
+    <div class="file-header">
+        <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem;">
+            <img src="/static/img/sara.jpg" class="commit-avatar"/>
+            <a href="#" style="color:#e6edf3; font-weight:600;">sara-reeves</a>
+            <span style="color:#8b949e;">initial analysis files — PulseLoader C2 campaign</span>
+        </div>
+        <div style="font-size:0.8rem; color:#8b949e;">
+            <span style="font-family:monospace; color:#58a6ff;">b2e9a14</span>
+            &nbsp;· 1 day ago · <a href="#" style="color:#8b949e;">3 commits</a>
+        </div>
+    </div>
+
+    <div class="file-table">
+        <div class="file-row">
+            <span class="file-icon">📄</span>
+            <div class="file-name"><a href="#">README.md</a></div>
+            <div class="file-commit">initial analysis files — PulseLoader C2 campaign</div>
+            <div class="file-time">1 day ago</div>
+        </div>
+        <div class="file-row">
+            <span class="file-icon">📄</span>
+            <div class="file-name"><a href="#">beacon_decode.py</a></div>
+            <div class="file-commit">add beacon decoder script</div>
+            <div class="file-time">1 day ago</div>
+        </div>
+        <div class="file-row">
+            <span class="file-icon">📄</span>
+            <div class="file-name"><a href="#">indicators.txt</a></div>
+            <div class="file-commit">initial analysis files — PulseLoader C2 campaign</div>
+            <div class="file-time">1 day ago</div>
+        </div>
+        <div class="file-row">
+            <span class="file-icon">📄</span>
+            <div class="file-name"><a href="#">pulseloader.yar</a></div>
+            <div class="file-commit">initial analysis files — PulseLoader C2 campaign</div>
+            <div class="file-time">1 day ago</div>
+        </div>
+    </div>
+
+    <div class="readme">
+        <div class="readme-header">📄 README.md</div>
+        <div class="readme-body">
+            <h2>pulseloader-analysis</h2>
+            <p>
+                Analysis files from my writeup on PulseLoader — a loader delivering second-stage
+                payloads via phishing lures, active against European targets in late 2024.
+            </p>
+
+            <h3>Contents</h3>
+            <ul>
+                <li><code>indicators.txt</code> — C2 domain, IP, URL pattern, and sample hash</li>
+                <li><code>pulseloader.yar</code> — YARA rule for network and host-based detection</li>
+                <li><code>beacon_decode.py</code> — decodes the base64-encoded beacon payload</li>
+            </ul>
+
+            <h3>Key indicators</h3>
+            <pre>C2 domain : cdn-telemetry-eu.net
+C2 IP     : 91.214.47.138
+Beacon    : HTTP POST /api/v1/metrics/push (every 4 min)
+User-agent: spoofed Windows Update
+SHA256    : 4a7f3c9e1b2d8f0a6e5c4b3d9f1a2e7c4b8d3f0a9e6c5b2d1f8a4e7c3b0d9f2</pre>
+
+            <p>
+                The C2 domain has been submitted to blocklists and is no longer active.
+                Full writeup on my site.
+            </p>
+            <p style="color:#8b949e; font-size:0.82rem;">— s.reeves@cipherwatch.io</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="sidebar">
+    <div class="about-card">
+        <div class="about-title">About</div>
+        <div class="about-desc">Analysis files for the PulseLoader C2 campaign — YARA rule, IOCs, and beacon decoder.</div>
+        <div class="stat-row">⭐ <span>22 stars</span></div>
+        <div class="stat-row">👁️ <a href="/github/sara-reeves/pulseloader-analysis/watchers" style="color:#8b949e;">4 watching</a></div>
+        <div class="stat-row">🍴 <span>5 forks</span></div>
+    </div>
+    <div class="about-card">
+        <div class="about-title">Languages</div>
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+            <div class="lang-dot-py"></div>
+            <span style="font-size:0.82rem; color:#e6edf3;">Python</span>
+            <span style="font-size:0.82rem; color:#8b949e; margin-left:auto;">52%</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <div class="lang-dot-txt"></div>
+            <span style="font-size:0.82rem; color:#e6edf3;">YARA</span>
+            <span style="font-size:0.82rem; color:#8b949e; margin-left:auto;">48%</span>
+        </div>
+        <div style="height:6px; border-radius:3px; overflow:hidden; display:flex;">
+            <div style="width:52%; background:#3572A5;"></div>
+            <div style="width:48%; background:#6e7681;"></div>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

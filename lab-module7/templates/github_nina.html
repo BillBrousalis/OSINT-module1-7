@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>nina-scholz (Nina Scholz) — GitHub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #0d1117; color: #e6edf3; font-size: 14px; }
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .navbar { background: #161b22; border-bottom: 1px solid #30363d; height: 62px; display: flex; align-items: center; padding: 0 32px; gap: 16px; position: sticky; top: 0; z-index: 100; }
+        .nav-logo { font-size: 1.6rem; color: #f0f6fc; margin-right: 8px; }
+        .nav-search { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; color: #8b949e; width: 240px; }
+        .nav-links { display: flex; gap: 16px; font-size: 0.85rem; }
+        .nav-links a { color: #e6edf3; font-weight: 500; }
+        .nav-links a:hover { color: #f0f6fc; text-decoration: none; }
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+        .nav-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #30363d; }
+        .page { max-width: 1280px; margin: 0 auto; padding: 24px 32px; display: flex; gap: 32px; align-items: flex-start; }
+        .sidebar { width: 296px; flex-shrink: 0; }
+        .main { flex: 1; min-width: 0; }
+        .avatar { width: 296px; height: 296px; border-radius: 50%; object-fit: cover; border: 1px solid #30363d; display: block; margin-bottom: 16px; }
+        .profile-name { font-size: 1.3rem; font-weight: 600; color: #f0f6fc; margin-bottom: 2px; }
+        .profile-username { font-size: 1.1rem; color: #8b949e; font-weight: 300; margin-bottom: 12px; }
+        .profile-bio { font-size: 0.9rem; color: #e6edf3; margin-bottom: 16px; line-height: 1.6; }
+        .btn-follow { width: 100%; padding: 6px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; cursor: pointer; margin-bottom: 16px; }
+        .btn-follow:hover { background: #30363d; border-color: #8b949e; }
+        .profile-meta { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; margin-bottom: 16px; }
+        .meta-item { display: flex; align-items: center; gap: 8px; color: #8b949e; }
+        .followers { font-size: 0.85rem; color: #8b949e; margin-bottom: 16px; }
+        .followers strong { color: #e6edf3; }
+        .divider { border: none; border-top: 1px solid #21262d; margin: 16px 0; }
+        .tabs { display: flex; border-bottom: 1px solid #30363d; margin-bottom: 16px; gap: 0; }
+        .tab { padding: 10px 16px; font-size: 0.85rem; color: #8b949e; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; }
+        .tab.active { color: #f0f6fc; border-bottom-color: #f78166; font-weight: 600; }
+        .tab-count { background: #30363d; border-radius: 12px; padding: 1px 7px; font-size: 0.75rem; color: #8b949e; }
+        .repo-card { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 12px; }
+        .repo-name { font-size: 0.95rem; font-weight: 600; color: #58a6ff; margin-bottom: 6px; }
+        .repo-desc { font-size: 0.82rem; color: #8b949e; margin-bottom: 12px; line-height: 1.5; }
+        .repo-meta { display: flex; gap: 16px; font-size: 0.78rem; color: #8b949e; }
+        .repo-lang::before { content: '●'; margin-right: 4px; color: #3572A5; }
+        .label { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 500; background: #1f4b8e; color: #58a6ff; border: 1px solid #1f4b8e; }
+        .contrib-label { font-size: 0.8rem; color: #8b949e; margin-bottom: 8px; }
+        .contrib-grid { display: grid; grid-template-columns: repeat(52, 1fr); gap: 2px; }
+        .contrib-cell { width: 10px; height: 10px; border-radius: 2px; background: #161b22; }
+        .contrib-cell.l1 { background: #0e4429; }
+        .contrib-cell.l2 { background: #006d32; }
+        .contrib-cell.l3 { background: #26a641; }
+        .contrib-cell.l4 { background: #39d353; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="nav-logo">⬡</span>
+    <input class="nav-search" type="text" placeholder="Search or jump to..."/>
+    <div class="nav-links">
+        <a href="#">Pull requests</a>
+        <a href="#">Issues</a>
+        <a href="#">Marketplace</a>
+        <a href="#">Explore</a>
+    </div>
+    <div class="nav-right">
+        <span style="color:#8b949e; font-size:1rem;">🔔</span>
+        <img src="/static/img/sara.jpg" class="nav-avatar"/>
+    </div>
+</nav>
+
+<div class="page">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="/static/img/nina.jpg" class="avatar"/>
+        <div class="profile-name">Nina Scholz</div>
+        <div class="profile-username">nina-scholz</div>
+        <div class="profile-bio">SOC analyst by day. Tinkering with detection rules and log parsers by night.</div>
+        <button class="btn-follow">Follow</button>
+
+        <div class="profile-meta">
+            <div class="meta-item">🏢 <span>DataShield</span></div>
+            <div class="meta-item">📍 <span>Berlin, Germany</span></div>
+        </div>
+
+        <div class="followers">
+            <strong>34</strong> followers &nbsp;·&nbsp; <strong>18</strong> following
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="tabs">
+            <div class="tab active">Overview</div>
+            <div class="tab">Repositories <span class="tab-count">4</span></div>
+            <div class="tab">Projects</div>
+            <div class="tab">Stars <span class="tab-count">12</span></div>
+        </div>
+
+        <!-- Pinned repo -->
+        <div style="margin-bottom:24px;">
+            <div style="font-size:0.85rem; color:#8b949e; margin-bottom:8px;">Pinned</div>
+            <div class="repo-card">
+                <div class="repo-name">
+                    <a href="#">⬡ sigma-rules</a>
+                    <span class="label" style="margin-left:8px;">Public</span>
+                </div>
+                <div class="repo-desc">Custom Sigma detection rules for common attack patterns. Contributions welcome.</div>
+                <div class="repo-meta">
+                    <span class="repo-lang">Python</span>
+                    <span>⭐ 8</span>
+                    <span>🍴 2</span>
+                    <span>Updated 1 week ago</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contribution graph -->
+        <div style="background:#161b22; border:1px solid #30363d; border-radius:6px; padding:16px;">
+            <div class="contrib-label">112 contributions in the last year</div>
+            <div class="contrib-grid" id="grid"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const grid = document.getElementById('grid');
+    const levels = [1,2,0,1,3,0,2,1,0,1,2,0,1,0,2,3,1,0,2,1,0,1,2,1,0,2,0,1,3,2,0,1,0,2,1,0,1,2,0,1,0,2,1,3,0,1,2,0,1,0,2,1];
+    for (let i = 0; i < 52 * 7; i++) {
+        const cell = document.createElement('div');
+        const day = i % 7;
+        const week = Math.floor(i / 7);
+        const lvl = (day === 0 || day === 6) ? 0 : (levels[week] || 0);
+        cell.className = 'contrib-cell' + (lvl > 0 ? ' l' + lvl : '');
+        grid.appendChild(cell);
+    }
+</script>
+</body>
+</html>

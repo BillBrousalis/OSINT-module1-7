@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sara Reeves — Malware Analyst</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #0f172a; color: #e2e8f0; }
+        a { color: #60a5fa; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .topbar { background: #1e293b; border-bottom: 1px solid #334155; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .topbar-brand { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+        .topbar-links { display: flex; gap: 24px; font-size: 0.85rem; }
+        .topbar-links a { color: #94a3b8; }
+
+        .hero { max-width: 800px; margin: 0 auto; padding: 64px 24px 40px; border-bottom: 1px solid #1e293b; }
+        .hero-inner { display: flex; align-items: center; gap: 28px; margin-bottom: 24px; }
+        .hero-avatar { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 2px solid #334155; flex-shrink: 0; }
+        .hero-name { font-size: 1.7rem; color: #f1f5f9; font-weight: 700; margin-bottom: 4px; }
+        .hero-sub { color: #64748b; font-size: 0.9rem; }
+        .hero-bio { color: #94a3b8; line-height: 1.8; max-width: 600px; margin-bottom: 20px; font-size: 0.9rem; }
+        .hero-links { display: flex; gap: 12px; }
+        .hero-link { padding: 8px 16px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #94a3b8; font-size: 0.85rem; text-decoration: none; }
+        .hero-link:hover { background: #293548; text-decoration: none; }
+
+        .content { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+        .section-title { font-size: 1rem; font-weight: 600; color: #f1f5f9; margin-bottom: 16px; }
+
+        .post-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+        .post-title { font-size: 0.95rem; font-weight: 600; color: #f1f5f9; margin-bottom: 6px; }
+        .post-meta { font-size: 0.78rem; color: #64748b; margin-bottom: 10px; }
+        .post-excerpt { font-size: 0.85rem; color: #94a3b8; line-height: 1.7; }
+        .post-tag { display: inline-block; font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; color: #64748b; margin-top: 10px; margin-right: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">sara-reeves.io</div>
+    <div class="topbar-links">
+        <a href="/linkedout/sara-reeves">LinkedOut</a>
+        <a href="/github/notifications">GitHub</a>
+        <a href="mailto:s.reeves@cipherwatch.io">Contact</a>
+        <a href="/sara-reeves.io/analytics">Analytics</a>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-inner">
+        <img src="/static/img/sara.jpg" class="hero-avatar"/>
+        <div>
+            <div class="hero-name">Sara Reeves</div>
+            <div class="hero-sub">Malware Analyst · CipherWatch Security · London, UK</div>
+        </div>
+    </div>
+    <p class="hero-bio">
+        Five years analysing malware, reverse engineering loaders, and tracking threat
+        infrastructure. I write about what I find — occasionally publish tooling on GitHub.
+        Based in London, working across the EU threat landscape.
+    </p>
+    <div class="hero-links">
+        <a href="/linkedout/sara-reeves" class="hero-link">LinkedOut</a>
+        <a href="/github/notifications" class="hero-link">GitHub</a>
+        <a href="mailto:s.reeves@cipherwatch.io" class="hero-link">Contact</a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="section-title">Recent Writing</div>
+
+    <div class="post-card">
+        <div class="post-title">PulseLoader — Dissecting an active C2 operation</div>
+        <div class="post-meta">14 Jan 2025 &nbsp;·&nbsp; 9 min read</div>
+        <div class="post-excerpt">
+            A loader sample landed in my inbox last week via a phishing lure disguised as
+            an invoice PDF. What started as routine triage turned into something more
+            interesting — the infrastructure was still live, actively receiving beacons
+            from compromised machines across Europe.
+            <br/><br/>
+            The sample beacons to <strong>cdn-telemetry-eu.net</strong> (91.214.47.138)
+            via HTTP POST to <code style="background:#0f172a; padding:1px 5px; border-radius:3px; font-size:0.82em;">/api/v1/metrics/push</code>
+            every 4 minutes, with a base64-encoded payload in the request body. The
+            user-agent spoofs Windows Update traffic. The domain was registered six weeks
+            ago on a bulletproof provider — deliberate, not sloppy.
+            <br/><br/>
+            Full YARA rule, network indicators, and beacon analysis below. The domain
+            has since been submitted to blocklists.
+        </div>
+        <span class="post-tag">malware</span>
+        <span class="post-tag">C2</span>
+        <span class="post-tag">PulseLoader</span>
+        <span class="post-tag">YARA</span>
+    </div>
+
+    <div class="post-card">
+        <div class="post-title">PE header timestamps as a triage signal</div>
+        <div class="post-meta">8 Jan 2025 &nbsp;·&nbsp; 4 min read</div>
+        <div class="post-excerpt">
+            Compile timestamps in PE headers are trivially forgeable, but most commodity
+            malware authors don't bother. A timestamp from 1970 or 2037 is almost always
+            a packer artifact. Here's how I use them in initial triage.
+        </div>
+        <span class="post-tag">PE</span>
+        <span class="post-tag">triage</span>
+        <span class="post-tag">malware</span>
+    </div>
+
+    <div class="post-card">
+        <div class="post-title">Entropy analysis for packed binary detection</div>
+        <div class="post-meta">29 Dec 2024 &nbsp;·&nbsp; 5 min read</div>
+        <div class="post-excerpt">
+            High entropy sections are a reliable indicator of packed or encrypted code.
+            I walk through the entropy_check.py script from my GitHub repo and how I use
+            it as a first-pass filter before pulling out a disassembler.
+        </div>
+        <span class="post-tag">entropy</span>
+        <span class="post-tag">packing</span>
+        <span class="post-tag">tooling</span>
+    </div>
+</div>
+
+</body>
+</html>

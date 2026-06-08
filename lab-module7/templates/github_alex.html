@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>alex-h (Alex Hartmann) — GitHub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #0d1117; color: #e6edf3; font-size: 14px; }
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .navbar { background: #161b22; border-bottom: 1px solid #30363d; height: 62px; display: flex; align-items: center; padding: 0 32px; gap: 16px; position: sticky; top: 0; z-index: 100; }
+        .nav-logo { font-size: 1.6rem; color: #f0f6fc; margin-right: 8px; }
+        .nav-search { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; color: #8b949e; width: 240px; }
+        .nav-links { display: flex; gap: 16px; font-size: 0.85rem; }
+        .nav-links a { color: #e6edf3; font-weight: 500; }
+        .nav-links a:hover { color: #f0f6fc; text-decoration: none; }
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+        .nav-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #30363d; }
+
+        .page { max-width: 1280px; margin: 0 auto; padding: 24px 32px; display: flex; gap: 32px; align-items: flex-start; }
+        .sidebar { width: 296px; flex-shrink: 0; }
+        .main { flex: 1; min-width: 0; }
+
+        .avatar { width: 296px; height: 296px; border-radius: 50%; object-fit: cover; border: 1px solid #30363d; display: block; margin-bottom: 16px; }
+        .profile-name { font-size: 1.3rem; font-weight: 600; color: #f0f6fc; margin-bottom: 2px; }
+        .profile-username { font-size: 1.1rem; color: #8b949e; font-weight: 300; margin-bottom: 12px; }
+        .profile-bio { font-size: 0.9rem; color: #e6edf3; margin-bottom: 16px; line-height: 1.6; }
+        .btn-follow { width: 100%; padding: 6px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; cursor: pointer; margin-bottom: 16px; }
+        .btn-follow:hover { background: #30363d; border-color: #8b949e; }
+
+        .profile-meta { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; margin-bottom: 16px; }
+        .meta-item { display: flex; align-items: center; gap: 8px; color: #8b949e; }
+        .meta-item a { color: #58a6ff; }
+
+        .followers { font-size: 0.85rem; color: #8b949e; margin-bottom: 16px; }
+        .followers strong { color: #e6edf3; }
+
+        .divider { border: none; border-top: 1px solid #21262d; margin: 16px 0; }
+
+        /* Tabs */
+        .tabs { display: flex; border-bottom: 1px solid #30363d; margin-bottom: 16px; gap: 0; }
+        .tab { padding: 10px 16px; font-size: 0.85rem; color: #8b949e; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; }
+        .tab:hover { color: #e6edf3; border-bottom-color: #6e7681; text-decoration: none; }
+        .tab.active { color: #f0f6fc; border-bottom-color: #f78166; font-weight: 600; }
+        .tab-count { background: #30363d; border-radius: 12px; padding: 1px 7px; font-size: 0.75rem; color: #8b949e; }
+
+        /* Repo card */
+        .repo-card { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 12px; }
+        .repo-name { font-size: 0.95rem; font-weight: 600; color: #58a6ff; margin-bottom: 6px; }
+        .repo-desc { font-size: 0.82rem; color: #8b949e; margin-bottom: 12px; line-height: 1.5; }
+        .repo-meta { display: flex; gap: 16px; font-size: 0.78rem; color: #8b949e; }
+        .repo-lang::before { content: '●'; margin-right: 4px; color: #f1e05a; }
+        .label { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 500; background: #1f4b8e; color: #58a6ff; border: 1px solid #1f4b8e; }
+
+        /* Contribution grid */
+        .contrib-label { font-size: 0.8rem; color: #8b949e; margin-bottom: 8px; }
+        .contrib-grid { display: grid; grid-template-columns: repeat(52, 1fr); gap: 2px; }
+        .contrib-cell { width: 10px; height: 10px; border-radius: 2px; background: #161b22; }
+        .contrib-cell.l1 { background: #0e4429; }
+        .contrib-cell.l2 { background: #006d32; }
+        .contrib-cell.l3 { background: #26a641; }
+        .contrib-cell.l4 { background: #39d353; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="nav-logo">⬡</span>
+    <input class="nav-search" type="text" placeholder="Search or jump to..."/>
+    <div class="nav-links">
+        <a href="#">Pull requests</a>
+        <a href="#">Issues</a>
+        <a href="#">Marketplace</a>
+        <a href="#">Explore</a>
+    </div>
+    <div class="nav-right">
+        <span style="color:#8b949e; font-size:1rem;">🔔</span>
+        <img src="/static/img/sara.jpg" class="nav-avatar"/>
+    </div>
+</nav>
+
+<div class="page">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="/static/img/alex.jpg" class="avatar"/>
+        <div class="profile-name">Alex Hartmann</div>
+        <div class="profile-username">alex-h</div>
+        <div class="profile-bio">IT contractor. Amsterdam.</div>
+        <button class="btn-follow">Follow</button>
+
+        <div class="profile-meta">
+            <div class="meta-item">📍 <span>Amsterdam, Netherlands</span></div>
+            <div class="meta-item">✉️ <a href="mailto:a.hartmann@proton.me">a.hartmann@vantage-ti.com</a></div>
+        </div>
+
+        <div class="followers">
+            <strong>12</strong> followers &nbsp;·&nbsp; <strong>5</strong> following
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; margin-bottom:8px;">Watching</div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:#8b949e; background:#161b22; border:1px solid #30363d; border-radius:6px; padding:8px 12px;">
+            <span>👁️</span>
+            <span>sara-reeves / <a href="/github/sara-reeves/pulseloader-analysis">pulseloader-analysis</a></span>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="tabs">
+            <div class="tab active">Overview</div>
+            <div class="tab">Repositories <span class="tab-count">0</span></div>
+            <div class="tab">Projects</div>
+            <div class="tab">Stars <span class="tab-count">0</span></div>
+        </div>
+
+        <!-- Contribution graph -->
+        <div style="background:#161b22; border:1px solid #30363d; border-radius:6px; padding:16px;">
+            <div class="contrib-label">8 contributions in the last year</div>
+            <div class="contrib-grid" id="grid"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const grid = document.getElementById('grid');
+    const levels = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0];
+    for (let i = 0; i < 52 * 7; i++) {
+        const cell = document.createElement('div');
+        const day = i % 7;
+        const week = Math.floor(i / 7);
+        const lvl = (day === 0 || day === 6) ? 0 : (levels[week] || 0);
+        cell.className = 'contrib-cell' + (lvl > 0 ? ' l' + lvl : '');
+        grid.appendChild(cell);
+    }
+</script>
+</body>
+</html>

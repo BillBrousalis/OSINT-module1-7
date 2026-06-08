@@ -253,18 +253,21 @@
     - name: "[M1] Enable Roundcube site"
       ansible.builtin.command: a2ensite roundcube
 
-    - name: "[M1] Enable Apache modules"
+    - name: "[M1] Enable Apache rewrite module"
       community.general.apache2_module:
-        name: "{{ item }}"
+        name: rewrite
         state: present
-      loop:
-        - rewrite
-        - php8.3
+
+    - name: "[M1] Enable Apache PHP 8.3 module"
+      community.general.apache2_module:
+        name: php8.3
+        identifier: php_module
+        state: present
 
     # ── Seed email ───────────────────────────────────────────────────────────
     - name: "[M1] Copy whistleblower EML to server"
       ansible.builtin.copy:
-        src: lab-module1/mail/whistleblower.eml
+        src: ../lab-module1/mail/whistleblower.eml
         dest: /tmp/whistleblower.eml
         owner: root
         group: root
@@ -349,7 +352,7 @@
     # ── Deploy app files ─────────────────────────────────────────────────────
     - name: "[M7] Deploy Flask app"
       ansible.builtin.copy:
-        src: lab-module7/app.py
+        src: ../lab-module7/app.py
         dest: /opt/lab-module7/app.py
         owner: ubuntu
         group: ubuntu
@@ -357,43 +360,40 @@
 
     - name: "[M7] Deploy HTML templates"
       ansible.builtin.copy:
-        src: "lab-module7/templates/{{ item }}"
+        src: "../lab-module7/templates/{{ item }}"
         dest: "/opt/lab-module7/templates/{{ item }}"
         owner: ubuntu
         group: ubuntu
         mode: '0644'
       loop:
-        - base.html
         - index.html
+        - github_alex.html
+        - github_nina.html
         - github_notifications.html
-        - github_profile.html
-        - github_repo.html
         - github_sara_repo.html
         - github_sara_watchers.html
-        - github_nina.html
-        - linkedout_sara.html
-        - linkedout_sara_views.html
         - linkedout_alex.html
         - linkedout_emma.html
         - linkedout_james.html
         - linkedout_nina.html
+        - linkedout_sara.html
+        - linkedout_sara_views.html
         - personal_website.html
         - personal_website_analytics.html
 
     - name: "[M7] Deploy profile images"
       ansible.builtin.copy:
-        src: "lab-module7/static/img/{{ item }}"
+        src: "../lab-module7/static/img/{{ item }}"
         dest: "/opt/lab-module7/static/img/{{ item }}"
         owner: ubuntu
         group: ubuntu
         mode: '0644'
       loop:
-        - sara.jpg
-        - alex_linkedout.jpg
-        - alex_github.jpg
+        - alex.jpg
         - emma.jpg
         - james.jpg
         - nina.jpg
+        - sara.jpg
 
     # ── Systemd service ──────────────────────────────────────────────────────
     - name: "[M7] Deploy systemd service for Flask app"

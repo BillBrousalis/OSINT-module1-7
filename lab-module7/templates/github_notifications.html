@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Notifications — GitHub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #0d1117; color: #e6edf3; font-size: 14px; }
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Navbar */
+        .navbar { background: #161b22; border-bottom: 1px solid #30363d; height: 62px; display: flex; align-items: center; padding: 0 32px; gap: 16px; position: sticky; top: 0; z-index: 100; }
+        .nav-logo { font-size: 1.6rem; color: #f0f6fc; margin-right: 8px; }
+        .nav-search { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; color: #8b949e; width: 240px; }
+        .nav-links { display: flex; gap: 16px; font-size: 0.85rem; color: #e6edf3; margin-left: 8px; }
+        .nav-links a { color: #e6edf3; font-weight: 500; }
+        .nav-links a:hover { color: #f0f6fc; text-decoration: none; }
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+        .nav-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #30363d; }
+        .nav-icon { color: #8b949e; font-size: 1rem; cursor: pointer; }
+        .nav-icon:hover { color: #f0f6fc; }
+
+        .page { max-width: 1280px; margin: 0 auto; padding: 24px 32px; display: flex; gap: 24px; }
+        .sidebar { width: 240px; flex-shrink: 0; }
+        .main { flex: 1; min-width: 0; }
+
+        .filter-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; color: #8b949e; cursor: pointer; margin-bottom: 2px; }
+        .filter-item:hover { background: #21262d; color: #e6edf3; }
+        .filter-item.active { background: #21262d; color: #e6edf3; font-weight: 600; }
+        .filter-dot { width: 8px; height: 8px; border-radius: 50%; background: #1f6feb; flex-shrink: 0; }
+
+        .notif-group { background: #161b22; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+        .notif-header { padding: 10px 16px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between; }
+        .notif-repo { font-size: 0.85rem; font-weight: 600; color: #e6edf3; }
+        .notif-item { padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #21262d; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-unread { border-left: 3px solid #1f6feb; }
+        .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #1f6feb; flex-shrink: 0; margin-top: 6px; }
+        .notif-dot-empty { width: 8px; height: 8px; flex-shrink: 0; }
+        .notif-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; color: #8b949e; }
+        .label { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 500; background: #1f4b8e; color: #58a6ff; border: 1px solid #1f4b8e; }
+        .btn-sm { padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="nav-logo">⬡</span>
+    <input class="nav-search" type="text" placeholder="Search or jump to..."/>
+    <div class="nav-links">
+        <a href="#">Pull requests</a>
+        <a href="#">Issues</a>
+        <a href="#">Marketplace</a>
+        <a href="#">Explore</a>
+    </div>
+    <div class="nav-right">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-icon">+</span>
+        <img src="/static/img/sara.jpg" class="nav-avatar"/>
+    </div>
+</nav>
+
+<div class="page">
+
+    <div class="sidebar">
+        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; margin-bottom:8px; padding:0 12px;">Filters</div>
+        <div class="filter-item active"><span class="filter-dot"></span> Unread</div>
+        <div class="filter-item">All notifications</div>
+        <div style="margin-top:16px; font-size:0.8rem; color:#8b949e; font-weight:600; margin-bottom:8px; padding:0 12px;">Repositories</div>
+        <div class="filter-item active">sara-reeves/personal-scripts</div>
+    </div>
+
+    <div class="main">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <h2 style="font-size:1rem; font-weight:600; color:#f0f6fc;">Notifications</h2>
+            <button class="btn-sm">Mark all as read</button>
+        </div>
+
+        <div class="notif-group">
+            <div class="notif-header">
+                <span class="nav-icon" style="font-size:0.85rem;">⬡</span>
+                <span class="notif-repo" style="margin-left:8px;">sara-reeves / personal-scripts</span>
+                <span style="margin-left:auto; font-size:0.8rem; color:#8b949e;">1 unread</span>
+            </div>
+
+            <div class="notif-item notif-unread">
+                <div class="notif-dot"></div>
+                <span class="notif-icon">👁️</span>
+                <div style="flex:1;">
+                    <p style="color:#e6edf3; margin-bottom:4px; font-size:0.9rem;">
+                        <a href="/github/alex-h" style="color:#e6edf3; font-weight:500;">alex-h</a>
+                        started watching your repository
+                        <strong>personal-scripts</strong>
+                    </p>
+                    <p style="color:#8b949e; font-size:0.78rem;">2 hours ago &nbsp;·&nbsp; <span class="label">Watch</span></p>
+                </div>
+                <button class="btn-sm" style="flex-shrink:0;">✓</button>
+            </div>
+        </div>
+
+        <div style="text-align:center; padding:32px; color:#8b949e; font-size:0.85rem;">
+            You're all caught up!
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

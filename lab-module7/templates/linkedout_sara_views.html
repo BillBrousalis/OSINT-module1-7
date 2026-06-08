@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Profile Views | LinkedOut</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #f3f2ef; color: rgba(0,0,0,0.9); font-size: 14px; }
+        a { color: #0a66c2; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .navbar { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; padding: 0 24px; display: flex; align-items: center; gap: 8px; height: 52px; }
+        .navbar-logo { font-size: 1rem; color: #0a66c2; font-weight: 900; letter-spacing: -0.5px; margin-right: 8px; }
+        .navbar-search { background: #eef3f8; border: none; border-radius: 4px; padding: 8px 12px; font-size: 0.85rem; width: 220px; color: #333; }
+        .navbar-links { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+        .navbar-link { display: flex; flex-direction: column; align-items: center; padding: 0 12px; color: rgba(0,0,0,0.6); font-size: 0.7rem; cursor: pointer; border-bottom: 2px solid transparent; height: 52px; justify-content: center; gap: 2px; }
+        .navbar-link span:first-child { font-size: 1.1rem; }
+        .page { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+        .card { background: #fff; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08); margin-bottom: 8px; overflow: hidden; }
+        .card-body { padding: 16px; }
+        .card-title { font-size: 1rem; font-weight: 600; color: rgba(0,0,0,0.9); margin-bottom: 4px; }
+        .viewed-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .viewed-item:last-child { border-bottom: none; }
+        .viewer-photo { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .viewer-photo-placeholder { width: 56px; height: 56px; border-radius: 50%; background: #ccc; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
+        .viewer-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+        .viewer-title { color: rgba(0,0,0,0.6); font-size: 0.8rem; }
+        .viewer-time { margin-left: auto; color: rgba(0,0,0,0.5); font-size: 0.75rem; flex-shrink: 0; white-space: nowrap; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-logo">LinkedOut</div>
+    <input class="navbar-search" type="text" placeholder="Search"/>
+    <div class="navbar-links">
+        <div class="navbar-link"><span>🏠</span><span>Home</span></div>
+        <div class="navbar-link"><span>👥</span><span>My Network</span></div>
+        <div class="navbar-link"><span>💼</span><span>Jobs</span></div>
+        <div class="navbar-link"><span>💬</span><span>Messaging</span></div>
+        <div class="navbar-link"><span>🔔</span><span>Notifications</span></div>
+        <div class="navbar-link"><span>👤</span><span>Me</span></div>
+    </div>
+</nav>
+
+<div class="page">
+
+    <div style="margin-bottom:16px;">
+        <a href="/linkedout/sara-reeves" style="font-size:0.85rem; color:rgba(0,0,0,0.5);">← Back to profile</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title">Who viewed your profile</div>
+            <p style="color:rgba(0,0,0,0.5); font-size:0.8rem; margin-bottom:20px;">5 views in the last 7 days</p>
+
+            <!-- Emma -->
+            <div class="viewed-item">
+                <img src="/static/img/emma.jpg" class="viewer-photo"/>
+                <div>
+                    <div class="viewer-name"><a href="/linkedout/emma-clarke">Emma Clarke</a></div>
+                    <div class="viewer-title">Technical Recruiter at TalentBridge · London</div>
+                </div>
+                <div class="viewer-time">1h ago</div>
+            </div>
+
+            <!-- James -->
+            <div class="viewed-item">
+                <img src="/static/img/james.jpg" class="viewer-photo"/>
+                <div>
+                    <div class="viewer-name"><a href="/linkedout/james-okafor">James Okafor</a></div>
+                    <div class="viewer-title">Security Engineer at Cloudrise · London</div>
+                </div>
+                <div class="viewer-time">5h ago</div>
+            </div>
+
+            <!-- Alex — buried in the middle, vague job title -->
+            <div class="viewed-item">
+                <img src="/static/img/alex.jpg" class="viewer-photo"/>
+                <div>
+                    <div class="viewer-name"><a href="/linkedout/alex-hartmann">Alex Hartmann</a></div>
+                    <div class="viewer-title">Security Researcher · Amsterdam</div>
+                </div>
+                <div class="viewer-time">1d ago</div>
+            </div>
+
+            <!-- Nina -->
+            <div class="viewed-item">
+                <img src="/static/img/nina.jpg" class="viewer-photo"/>
+                <div>
+                    <div class="viewer-name"><a href="/linkedout/nina-scholz">Nina Scholz</a></div>
+                    <div class="viewer-title">SOC Analyst at DataShield · Berlin</div>
+                </div>
+                <div class="viewer-time">3d ago</div>
+            </div>
+
+            <!-- Tom — anonymous -->
+            <div class="viewed-item">
+                <div class="viewer-photo-placeholder">🔒</div>
+                <div>
+                    <div class="viewer-name" style="color:rgba(0,0,0,0.5); font-style:italic;">LinkedOut Member</div>
+                    <div class="viewer-title">This person chose to be shown as anonymous</div>
+                </div>
+                <div class="viewer-time">5d ago</div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

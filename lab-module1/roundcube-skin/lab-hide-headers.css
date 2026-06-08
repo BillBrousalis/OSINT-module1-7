@@ -1,0 +1,30 @@
+/*
+ * Lab override — hide all header-related UI elements
+ * Students must download the .eml to inspect headers
+ */
+
+/* Hide "All headers" toggle button in message toolbar */
+a.rcmfd_show_headers,
+button.rcmfd_show_headers,
+.rcmfd_show_headers,
+#rcmfd_show_headers,
+a[onclick*="show_headers"],
+.message-headers-toggle,
+.toggle-headers,
+#toggle-headers { 
+    display: none !important; 
+}
+
+/* Hide the headers block itself if it somehow renders */
+.headers-table,
+#message-headers,
+.message-headers,
+table.headers-table { 
+    display: none !important; 
+}
+
+/* Hide "Headers" option in message action menus */
+li a[rel="show-headers"],
+.menu-item-show-headers { 
+    display: none !important; 
+}
