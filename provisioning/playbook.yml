@@ -1,7 +1,9 @@
 # ─────────────────────────────────────────────
-#  Module 1 — Email Metadata Lab
+#  OSINT Course — Module 1 & Module 7 Labs
 #  VM1: Student machine (GUI + tools)
-#  VM2: Mail server (Postfix + Dovecot + Roundcube + Apache)
+#  VM2: Lab server
+#        - Port  80 : Roundcube webmail  (Module 1)
+#        - Port 8080: Flask simulation   (Module 7)
 # ─────────────────────────────────────────────
 
 # ─────────────────────────────────────────────
@@ -34,7 +36,7 @@
       user_access_sudo: true
 
 # ─────────────────────────────────────────────
-#  Mail server
+#  Lab server
 # ─────────────────────────────────────────────
 - name: VM2 Initialization
   hosts:
@@ -43,7 +45,11 @@
 
   tasks:
 
-    - name: Install mail server and webmail packages
+    # ════════════════════════════════════════════════════════════════════════
+    #  MODULE 1 — Roundcube webmail (port 80)
+    # ════════════════════════════════════════════════════════════════════════
+
+    - name: "[M1] Install mail server and webmail packages"
       ansible.builtin.apt:
         name:
           - postfix
@@ -60,19 +66,18 @@
           - php-curl
           - roundcube
           - roundcube-sqlite3
-          - supervisor
           - curl
         state: present
         update_cache: 'yes'
 
     # ── vmail user ───────────────────────────────────────────────────────────
-    - name: Create vmail group
+    - name: "[M1] Create vmail group"
       ansible.builtin.group:
         name: vmail
         gid: 5000
         state: present
 
-    - name: Create vmail user
+    - name: "[M1] Create vmail user"
       ansible.builtin.user:
         name: vmail
         uid: 5000
@@ -82,7 +87,7 @@
         state: present
 
     # ── Maildir ──────────────────────────────────────────────────────────────
-    - name: Create maildir structure for journalist@arcturus-news.com
+    - name: "[M1] Create maildir structure for journalist@arcturus-news.com"
       ansible.builtin.file:
         path: "/var/mail/vhosts/arcturus-news.com/journalist/{{ item }}"
         state: directory
@@ -95,7 +100,7 @@
         - tmp
 
     # ── Dovecot ──────────────────────────────────────────────────────────────
-    - name: Deploy Dovecot config
+    - name: "[M1] Deploy Dovecot config"
       ansible.builtin.copy:
         dest: /etc/dovecot/dovecot.conf
         owner: root
@@ -138,13 +143,13 @@
 
           ssl = no
 
-    - name: Generate Dovecot password hash
+    - name: "[M1] Generate Dovecot password hash"
       ansible.builtin.command:
         cmd: doveadm pw -s SHA512-CRYPT -p osint2025
       register: dovecot_hash
       changed_when: false
 
-    - name: Write Dovecot passwd file
+    - name: "[M1] Write Dovecot passwd file"
       ansible.builtin.copy:
         dest: /etc/dovecot/passwd
         owner: dovecot
@@ -153,7 +158,7 @@
         content: "journalist@arcturus-news.com:{{ dovecot_hash.stdout }}:5000:5000::/var/mail/vhosts/arcturus-news.com/journalist::\n"
 
     # ── Postfix ──────────────────────────────────────────────────────────────
-    - name: Deploy Postfix main.cf
+    - name: "[M1] Deploy Postfix main.cf"
       ansible.builtin.copy:
         dest: /etc/postfix/main.cf
         owner: root
@@ -173,7 +178,7 @@
           readme_directory = no
 
     # ── Roundcube ────────────────────────────────────────────────────────────
-    - name: Deploy Roundcube config
+    - name: "[M1] Deploy Roundcube config"
       ansible.builtin.copy:
         dest: /etc/roundcube/config.inc.php
         owner: root
@@ -199,7 +204,7 @@
           $config['show_headers'] = [];
           $config['dont_override'] = ['show_headers'];
 
-    - name: Create Roundcube SQLite db directory
+    - name: "[M1] Create Roundcube SQLite db directory"
       ansible.builtin.file:
         path: /var/roundcube/db
         state: directory
@@ -207,23 +212,23 @@
         group: www-data
         mode: '0755'
 
-    - name: Initialise Roundcube database
+    - name: "[M1] Initialise Roundcube database"
       ansible.builtin.command:
         cmd: php /var/lib/roundcube/bin/initdb.sh --dir=/var/lib/roundcube/SQL
       become_user: www-data
       ignore_errors: true
 
-    - name: Remove header toggle links from Roundcube message template
+    - name: "[M1] Remove header toggle links from Roundcube message template"
       ansible.builtin.lineinfile:
         path: /usr/share/roundcube/skins/elastic/templates/message.html
-        regexp: '{{ item }}'
+        regexp: "{{ item }}"
         state: absent
       loop:
         - '<a href="#headers" class="headers-summary"'
         - '<a href="#all-headers" class="headers-all"'
 
     # ── Apache ───────────────────────────────────────────────────────────────
-    - name: Deploy Apache virtualhost for Roundcube
+    - name: "[M1] Deploy Apache virtualhost for Roundcube"
       ansible.builtin.copy:
         dest: /etc/apache2/sites-available/roundcube.conf
         owner: root
@@ -242,14 +247,14 @@
               CustomLog ${APACHE_LOG_DIR}/roundcube_access.log combined
           </VirtualHost>
 
-    - name: Disable default Apache site
+    - name: "[M1] Disable default Apache site"
       ansible.builtin.command: a2dissite 000-default
       ignore_errors: true
 
-    - name: Enable Roundcube site
+    - name: "[M1] Enable Roundcube site"
       ansible.builtin.command: a2ensite roundcube
 
-    - name: Enable Apache modules
+    - name: "[M1] Enable Apache modules"
       community.general.apache2_module:
         name: "{{ item }}"
         state: present
@@ -258,15 +263,15 @@
         - php8.2
 
     # ── Seed email ───────────────────────────────────────────────────────────
-    - name: Copy whistleblower EML to server
+    - name: "[M1] Copy whistleblower EML to server"
       ansible.builtin.copy:
-        src: mail/whistleblower.eml
+        src: lab-module1/mail/whistleblower.eml
         dest: /tmp/whistleblower.eml
         owner: root
         group: root
         mode: '0644'
 
-    - name: Inject EML into journalist inbox
+    - name: "[M1] Inject EML into journalist inbox"
       ansible.builtin.shell: |
         TIMESTAMP=$(date +%s)
         FILENAME="${TIMESTAMP}.pid$$.lab"
@@ -276,21 +281,151 @@
       changed_when: true
 
     # ── Services ─────────────────────────────────────────────────────────────
-    - name: Enable and start Dovecot
+    - name: "[M1] Enable and start Dovecot"
       ansible.builtin.service:
         name: dovecot
         state: started
         enabled: true
 
-    - name: Enable and start Postfix
+    - name: "[M1] Enable and start Postfix"
       ansible.builtin.service:
         name: postfix
         state: started
         enabled: true
 
-    - name: Enable and start Apache2
+    - name: "[M1] Enable and start Apache2"
       ansible.builtin.service:
         name: apache2
+        state: started
+        enabled: true
+
+    # ════════════════════════════════════════════════════════════════════════
+    #  MODULE 7 — Flask simulation server (port 8080)
+    # ════════════════════════════════════════════════════════════════════════
+
+    - name: "[M7] Install Python and system dependencies"
+      ansible.builtin.apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+        state: present
+
+    # ── App directory ────────────────────────────────────────────────────────
+    - name: "[M7] Create app directory"
+      ansible.builtin.file:
+        path: /opt/lab-module7
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: "[M7] Create templates directory"
+      ansible.builtin.file:
+        path: /opt/lab-module7/templates
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: "[M7] Create static image directory"
+      ansible.builtin.file:
+        path: /opt/lab-module7/static/img
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    # ── Python venv and Flask ────────────────────────────────────────────────
+    - name: "[M7] Create Python virtual environment"
+      ansible.builtin.command:
+        cmd: python3 -m venv /opt/lab-module7/venv
+        creates: /opt/lab-module7/venv
+
+    - name: "[M7] Install Flask in virtual environment"
+      ansible.builtin.pip:
+        name: flask
+        virtualenv: /opt/lab-module7/venv
+
+    # ── Deploy app files ─────────────────────────────────────────────────────
+    - name: "[M7] Deploy Flask app"
+      ansible.builtin.copy:
+        src: lab-module7/app.py
+        dest: /opt/lab-module7/app.py
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: "[M7] Deploy HTML templates"
+      ansible.builtin.copy:
+        src: "lab-module7/templates/{{ item }}"
+        dest: "/opt/lab-module7/templates/{{ item }}"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+      loop:
+        - base.html
+        - index.html
+        - github_notifications.html
+        - github_profile.html
+        - github_repo.html
+        - github_sara_repo.html
+        - github_sara_watchers.html
+        - github_nina.html
+        - linkedout_sara.html
+        - linkedout_sara_views.html
+        - linkedout_alex.html
+        - linkedout_emma.html
+        - linkedout_james.html
+        - linkedout_nina.html
+        - personal_website.html
+        - personal_website_analytics.html
+
+    - name: "[M7] Deploy profile images"
+      ansible.builtin.copy:
+        src: "lab-module7/static/img/{{ item }}"
+        dest: "/opt/lab-module7/static/img/{{ item }}"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+      loop:
+        - sara.jpg
+        - alex_linkedout.jpg
+        - alex_github.jpg
+        - emma.jpg
+        - james.jpg
+        - nina.jpg
+
+    # ── Systemd service ──────────────────────────────────────────────────────
+    - name: "[M7] Deploy systemd service for Flask app"
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/lab-module7.service
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=OSINT Lab Module 7 — Flask simulation server
+          After=network.target
+
+          [Service]
+          User=ubuntu
+          WorkingDirectory=/opt/lab-module7
+          ExecStart=/opt/lab-module7/venv/bin/python app.py
+          Restart=always
+          RestartSec=3
+          Environment=FLASK_ENV=production
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: "[M7] Reload systemd daemon"
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: "[M7] Enable and start Flask service"
+      ansible.builtin.service:
+        name: lab-module7
         state: started
         enabled: true
 
