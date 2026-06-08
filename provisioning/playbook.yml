@@ -215,7 +215,6 @@
     - name: "[M1] Initialise Roundcube database"
       ansible.builtin.command:
         cmd: php /var/lib/roundcube/bin/initdb.sh --dir=/var/lib/roundcube/SQL
-      become_user: www-data
       ignore_errors: true
 
     - name: "[M1] Remove header toggle links from Roundcube message template"
@@ -260,7 +259,7 @@
         state: present
       loop:
         - rewrite
-        - php8.2
+        - php8.3
 
     # ── Seed email ───────────────────────────────────────────────────────────
     - name: "[M1] Copy whistleblower EML to server"
