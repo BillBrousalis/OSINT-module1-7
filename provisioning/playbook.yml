@@ -1,0 +1,301 @@
+# ─────────────────────────────────────────────
+#  Module 1 — Email Metadata Lab
+#  VM1: Student machine (GUI + tools)
+#  VM2: Mail server (Postfix + Dovecot + Roundcube + Apache)
+# ─────────────────────────────────────────────
+
+# ─────────────────────────────────────────────
+#  Student machine
+# ─────────────────────────────────────────────
+- name: VM1 Initialization
+  hosts:
+    - vm1
+  become: true
+
+  tasks:
+    - name: Install tools
+      ansible.builtin.apt:
+        name:
+          - python3
+          - python3-pip
+          - git
+          - curl
+          - wget
+          - firefox
+          - chromium
+          - libimage-exiftool-perl
+        state: present
+        update_cache: 'yes'
+
+  roles:
+    - role: user-access
+      user_access_username: user
+      user_access_password: Password123
+      user_access_sudo: true
+
+# ─────────────────────────────────────────────
+#  Mail server
+# ─────────────────────────────────────────────
+- name: VM2 Initialization
+  hosts:
+    - vm2
+  become: true
+
+  tasks:
+
+    - name: Install mail server and webmail packages
+      ansible.builtin.apt:
+        name:
+          - postfix
+          - dovecot-core
+          - dovecot-imapd
+          - apache2
+          - libapache2-mod-php
+          - php
+          - php-sqlite3
+          - php-mbstring
+          - php-xml
+          - php-intl
+          - php-zip
+          - php-curl
+          - roundcube
+          - roundcube-sqlite3
+          - supervisor
+          - curl
+        state: present
+        update_cache: 'yes'
+
+    # ── vmail user ───────────────────────────────────────────────────────────
+    - name: Create vmail group
+      ansible.builtin.group:
+        name: vmail
+        gid: 5000
+        state: present
+
+    - name: Create vmail user
+      ansible.builtin.user:
+        name: vmail
+        uid: 5000
+        group: vmail
+        shell: /sbin/nologin
+        create_home: false
+        state: present
+
+    # ── Maildir ──────────────────────────────────────────────────────────────
+    - name: Create maildir structure for journalist@arcturus-news.com
+      ansible.builtin.file:
+        path: "/var/mail/vhosts/arcturus-news.com/journalist/{{ item }}"
+        state: directory
+        owner: vmail
+        group: vmail
+        mode: '0700'
+      loop:
+        - new
+        - cur
+        - tmp
+
+    # ── Dovecot ──────────────────────────────────────────────────────────────
+    - name: Deploy Dovecot config
+      ansible.builtin.copy:
+        dest: /etc/dovecot/dovecot.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          protocols = imap
+          log_path = /var/log/dovecot.log
+          mail_location = maildir:/var/mail/vhosts/%d/%n
+          mail_uid = vmail
+          mail_gid = vmail
+          first_valid_uid = 5000
+          last_valid_uid = 5000
+          auth_mechanisms = plain login
+          auth_username_format = %u
+
+          passdb {
+            driver = passwd-file
+            args = scheme=SHA512-CRYPT username_format=%u /etc/dovecot/passwd
+          }
+
+          userdb {
+            driver = passwd-file
+            args = username_format=%u /etc/dovecot/passwd
+            default_fields = uid=vmail gid=vmail home=/var/mail/vhosts/%d/%n
+          }
+
+          service imap-login {
+            inet_listener imap {
+              address = 127.0.0.1
+              port = 143
+            }
+          }
+
+          service auth {
+            unix_listener /var/spool/postfix/private/auth {
+              mode = 0660
+            }
+          }
+
+          ssl = no
+
+    - name: Generate Dovecot password hash
+      ansible.builtin.command:
+        cmd: doveadm pw -s SHA512-CRYPT -p osint2025
+      register: dovecot_hash
+      changed_when: false
+
+    - name: Write Dovecot passwd file
+      ansible.builtin.copy:
+        dest: /etc/dovecot/passwd
+        owner: dovecot
+        group: dovecot
+        mode: '0600'
+        content: "journalist@arcturus-news.com:{{ dovecot_hash.stdout }}:5000:5000::/var/mail/vhosts/arcturus-news.com/journalist::\n"
+
+    # ── Postfix ──────────────────────────────────────────────────────────────
+    - name: Deploy Postfix main.cf
+      ansible.builtin.copy:
+        dest: /etc/postfix/main.cf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          myhostname = mail.arcturus-news.com
+          mydomain = arcturus-news.com
+          myorigin = $mydomain
+          inet_interfaces = loopback-only
+          mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+          home_mailbox = Maildir/
+          mailbox_command = /usr/lib/dovecot/deliver
+          smtpd_banner = $myhostname ESMTP
+          biff = no
+          append_dot_mydomain = no
+          readme_directory = no
+
+    # ── Roundcube ────────────────────────────────────────────────────────────
+    - name: Deploy Roundcube config
+      ansible.builtin.copy:
+        dest: /etc/roundcube/config.inc.php
+        owner: root
+        group: www-data
+        mode: '0640'
+        content: |
+          <?php
+          $config = [];
+          $config['default_host'] = '127.0.0.1';
+          $config['default_port'] = 143;
+          $config['imap_conn_options'] = ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]];
+          $config['username_domain'] = 'arcturus-news.com';
+          $config['smtp_server'] = '127.0.0.1';
+          $config['smtp_port'] = 25;
+          $config['smtp_user'] = '';
+          $config['smtp_pass'] = '';
+          $config['product_name'] = 'Arcturus News — Secure Mail';
+          $config['support_url'] = '';
+          $config['skin'] = 'elastic';
+          $config['enable_installer'] = false;
+          $config['des_key'] = 'osint_lab_secret_key_24c';
+          $config['db_dsnw'] = 'sqlite:////var/roundcube/db/roundcube.db';
+          $config['show_headers'] = [];
+          $config['dont_override'] = ['show_headers'];
+
+    - name: Create Roundcube SQLite db directory
+      ansible.builtin.file:
+        path: /var/roundcube/db
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Initialise Roundcube database
+      ansible.builtin.command:
+        cmd: php /var/lib/roundcube/bin/initdb.sh --dir=/var/lib/roundcube/SQL
+      become_user: www-data
+      ignore_errors: true
+
+    - name: Remove header toggle links from Roundcube message template
+      ansible.builtin.lineinfile:
+        path: /usr/share/roundcube/skins/elastic/templates/message.html
+        regexp: '{{ item }}'
+        state: absent
+      loop:
+        - '<a href="#headers" class="headers-summary"'
+        - '<a href="#all-headers" class="headers-all"'
+
+    # ── Apache ───────────────────────────────────────────────────────────────
+    - name: Deploy Apache virtualhost for Roundcube
+      ansible.builtin.copy:
+        dest: /etc/apache2/sites-available/roundcube.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          <VirtualHost *:80>
+              ServerName mail.arcturus-news.com
+              DocumentRoot /var/lib/roundcube/public_html
+              <Directory /var/lib/roundcube/public_html>
+                  Options -Indexes
+                  AllowOverride All
+                  Require all granted
+              </Directory>
+              ErrorLog ${APACHE_LOG_DIR}/roundcube_error.log
+              CustomLog ${APACHE_LOG_DIR}/roundcube_access.log combined
+          </VirtualHost>
+
+    - name: Disable default Apache site
+      ansible.builtin.command: a2dissite 000-default
+      ignore_errors: true
+
+    - name: Enable Roundcube site
+      ansible.builtin.command: a2ensite roundcube
+
+    - name: Enable Apache modules
+      community.general.apache2_module:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - rewrite
+        - php8.2
+
+    # ── Seed email ───────────────────────────────────────────────────────────
+    - name: Copy whistleblower EML to server
+      ansible.builtin.copy:
+        src: mail/whistleblower.eml
+        dest: /tmp/whistleblower.eml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Inject EML into journalist inbox
+      ansible.builtin.shell: |
+        TIMESTAMP=$(date +%s)
+        FILENAME="${TIMESTAMP}.pid$$.lab"
+        cp /tmp/whistleblower.eml /var/mail/vhosts/arcturus-news.com/journalist/new/${FILENAME}
+        chown vmail:vmail /var/mail/vhosts/arcturus-news.com/journalist/new/${FILENAME}
+        chmod 600 /var/mail/vhosts/arcturus-news.com/journalist/new/${FILENAME}
+      changed_when: true
+
+    # ── Services ─────────────────────────────────────────────────────────────
+    - name: Enable and start Dovecot
+      ansible.builtin.service:
+        name: dovecot
+        state: started
+        enabled: true
+
+    - name: Enable and start Postfix
+      ansible.builtin.service:
+        name: postfix
+        state: started
+        enabled: true
+
+    - name: Enable and start Apache2
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: true
+
+  roles:
+    - role: user-access
+      user_access_username: user
+      user_access_password: Password123
+      user_access_sudo: true
