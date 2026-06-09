@@ -152,10 +152,39 @@
     - name: "[M1] Write Dovecot passwd file"
       ansible.builtin.copy:
         dest: /etc/dovecot/passwd
-        owner: dovecot
+        owner: root
         group: dovecot
-        mode: '0600'
+        mode: '0640'
         content: "journalist@arcturus-news.com:{{ dovecot_hash.stdout }}:5000:5000::/var/mail/vhosts/arcturus-news.com/journalist::\n"
+
+    - name: "[M1] Configure Dovecot passwd-file auth backend"
+      ansible.builtin.copy:
+        dest: /etc/dovecot/conf.d/auth-passwdfile.conf.ext
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          passdb {
+            driver = passwd-file
+            args = scheme=SHA512-CRYPT username_format=%u /etc/dovecot/passwd
+          }
+
+          userdb {
+            driver = passwd-file
+            args = username_format=%u /etc/dovecot/passwd
+          }
+
+    - name: "[M1] Ensure Dovecot uses lab Maildir location"
+      ansible.builtin.lineinfile:
+        path: /etc/dovecot/conf.d/10-mail.conf
+        regexp: '^mail_location\s*='
+        line: 'mail_location = maildir:/var/mail/vhosts/%d/%n'
+
+    - name: "[M1] Ensure Dovecot auth includes passwd-file backend"
+      ansible.builtin.lineinfile:
+        path: /etc/dovecot/conf.d/10-auth.conf
+        regexp: '^#!include auth-passwdfile.conf.ext|^!include auth-passwdfile.conf.ext'
+        line: '!include auth-passwdfile.conf.ext'
 
     # ── Postfix ──────────────────────────────────────────────────────────────
     - name: "[M1] Deploy Postfix main.cf"
@@ -187,10 +216,13 @@
         content: |
           <?php
           $config = [];
+          // Roundcube 1.6+ uses imap_host/smtp_host; default_host/smtp_server are kept for compatibility.
+          $config['imap_host'] = '127.0.0.1:143';
           $config['default_host'] = '127.0.0.1';
           $config['default_port'] = 143;
           $config['imap_conn_options'] = ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]];
           $config['username_domain'] = 'arcturus-news.com';
+          $config['smtp_host'] = '127.0.0.1:25';
           $config['smtp_server'] = '127.0.0.1';
           $config['smtp_port'] = 25;
           $config['smtp_user'] = '';
@@ -264,6 +296,24 @@
         identifier: php_module
         state: present
 
+    - name: "[M1] Check enabled Apache sites"
+      ansible.builtin.command: a2query -s
+      register: apache_enabled_sites
+      changed_when: false
+
+    - name: "[M1] Show Apache virtualhost mapping"
+      ansible.builtin.command: apache2ctl -S
+      register: apache_vhost_mapping
+      changed_when: false
+
+    - name: "[M1] Print Apache enabled sites"
+      ansible.builtin.debug:
+        var: apache_enabled_sites.stdout_lines
+
+    - name: "[M1] Print Apache virtualhost mapping"
+      ansible.builtin.debug:
+        var: apache_vhost_mapping.stderr_lines
+
     # ── Seed email ───────────────────────────────────────────────────────────
     - name: "[M1] Copy whistleblower EML to server"
       ansible.builtin.copy:
@@ -283,22 +333,37 @@
       changed_when: true
 
     # ── Services ─────────────────────────────────────────────────────────────
-    - name: "[M1] Enable and start Dovecot"
+    - name: "[M1] Enable and restart Dovecot"
       ansible.builtin.service:
         name: dovecot
-        state: started
+        state: restarted
         enabled: true
 
-    - name: "[M1] Enable and start Postfix"
+    - name: "[M1] Verify Dovecot login for the lab mailbox"
+      ansible.builtin.command: doveadm auth test journalist@arcturus-news.com osint2025
+      register: dovecot_auth_test
+      changed_when: false
+
+    - name: "[M1] Print Dovecot auth test result"
+      ansible.builtin.debug:
+        var: dovecot_auth_test.stdout_lines
+
+    - name: "[M1] Enable and restart Postfix"
       ansible.builtin.service:
         name: postfix
-        state: started
+        state: restarted
         enabled: true
 
     - name: "[M1] Enable and start Apache2"
       ansible.builtin.service:
         name: apache2
         state: started
+        enabled: true
+
+    - name: "[M1] Reload Apache2 after site/module changes"
+      ansible.builtin.service:
+        name: apache2
+        state: reloaded
         enabled: true
 
     # ════════════════════════════════════════════════════════════════════════
