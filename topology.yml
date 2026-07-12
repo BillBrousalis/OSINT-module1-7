@@ -1,14 +1,14 @@
 name: osint-labs
 hosts:
   - name: vm1
-    flavor: standard.large
+    flavor: c2_r4_d40
     base_box:
       image: xubuntu-noble-x86_64
       mgmt_user: ubuntu
       mgmt_protocol: ssh
     hidden: false
   - name: vm2
-    flavor: standard.medium
+    flavor: c2_r4_d40
     base_box:
       image: ubuntu-noble-x86_64
       mgmt_user: ubuntu
